@@ -5,7 +5,7 @@ import "time"
 type SenderConfig struct {
 	WorkersAmount int
 	Timeout       time.Duration
-	FileSize      int64
+	FileSize      int
 	FileAmount    int
 }
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -19,25 +20,25 @@ type HttpSender struct {
 	conf    SenderConfig
 	url     string
 	counter uint32
-	file    io.Reader
+	file    string
 	fileC   chan struct{}
 }
 
 func NewHttpSender(conf SenderConfig, url string) *HttpSender {
 	return &HttpSender{
-		conf:  conf,
-		url:   url,
-		file:  nil,
-		fileC: nil,
+		conf: conf,
+		url:  url,
 	}
-
 }
 
 func (h *HttpSender) Start(ctx context.Context) {
-	h.file = createFlie(int(h.conf.FileSize))
+	h.file = strings.Repeat("a", h.conf.FileSize)
 
-	ctx, cancelCtx := context.WithTimeout(ctx, h.conf.Timeout)
-	defer cancelCtx()
+	if h.conf.Timeout != 0 {
+		var cancelCtx context.CancelFunc
+		ctx, cancelCtx = context.WithTimeout(ctx, h.conf.Timeout+time.Millisecond*900)
+		defer cancelCtx()
+	}
 
 	h.fileC = make(chan struct{}, timesBuffer*h.conf.FileAmount)
 	defer close(h.fileC)
@@ -55,6 +56,7 @@ func (h *HttpSender) Start(ctx context.Context) {
 			for i := 0; i < h.conf.FileAmount; i++ {
 				h.fileC <- struct{}{}
 			}
+			fmt.Printf("Sending %d files, channel status: %d / %d\n", h.conf.FileAmount, len(h.fileC), cap(h.fileC))
 		}
 	}
 }
@@ -66,7 +68,7 @@ func (h *HttpSender) sendWorker(ctx context.Context) {
 }
 
 func (h *HttpSender) sendHttpRequest(ctx context.Context) {
-	req, err := http.NewRequest("POST", h.url, h.file)
+	req, err := http.NewRequest("POST", h.url, strings.NewReader(h.file))
 	if err != nil {
 		fmt.Println("Error creating request:", err)
 		return

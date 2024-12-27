@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"context"
@@ -40,7 +40,7 @@ var senderCmd = &cobra.Command{
 		conf := injector.SenderConfig{
 			WorkersAmount: workersAmount,
 			Timeout:       t,
-			FileSize:      size,
+			FileSize:      int(size),
 			FileAmount:    fileAmount,
 		}
 
