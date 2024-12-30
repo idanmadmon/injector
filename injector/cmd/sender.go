@@ -14,49 +14,49 @@ import (
 )
 
 var (
-	workersAmount int
-	timeout       string
-	fileAmount    int
-	fileSize      string
-	url           string
+	senderWorkersAmount int
+	senderTimeout       string
+	senderFileAmount    int
+	senderFileSize      string
+	senderUrl           string
 )
 
 var senderCmd = &cobra.Command{
 	Use:   "sender",
 	Short: "create a http sender",
 	Run: func(cmd *cobra.Command, args []string) {
-		size, err := units.FromHumanSize(fileSize)
+		size, err := units.FromHumanSize(senderFileSize)
 		if err != nil {
-			fmt.Printf("file size given isn't valid: %s, error: %v\n", fileSize, err)
+			fmt.Printf("file size given isn't valid: %s, error: %v\n", senderFileSize, err)
 			os.Exit(1)
 		}
 
-		t, err := time.ParseDuration(timeout)
-		if timeout != "" && err != nil {
-			fmt.Printf("timeout given isn't valid: %s, error: %v\n", fileSize, err)
+		t, err := time.ParseDuration(senderTimeout)
+		if senderTimeout != "" && err != nil {
+			fmt.Printf("timeout given isn't valid: %s, error: %v\n", senderTimeout, err)
 			os.Exit(1)
 		}
 
 		conf := injector.SenderConfig{
-			WorkersAmount: workersAmount,
+			WorkersAmount: senderWorkersAmount,
 			Timeout:       t,
 			FileSize:      int(size),
-			FileAmount:    fileAmount,
+			FileAmount:    senderFileAmount,
 		}
 
 		ctx, cancelCtx := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 		defer cancelCtx()
 
-		sender := injector.NewHttpSender(conf, url)
+		sender := injector.NewHttpSender(conf, senderUrl)
 		sender.Start(ctx)
 	},
 }
 
 func init() {
-	senderCmd.Flags().IntVarP(&workersAmount, "workers", "w", 30, "workers amount")
-	senderCmd.Flags().StringVarP(&timeout, "timeout", "t", "", "timeout - string human times - empty means no timeout")
-	senderCmd.Flags().StringVarP(&fileSize, "size", "s", "", "filesize - string human size")
-	senderCmd.Flags().IntVarP(&fileAmount, "amount", "a", 10, "fileamount")
-	senderCmd.Flags().StringVarP(&url, "url", "u", "", "url to send to")
+	senderCmd.Flags().IntVarP(&senderWorkersAmount, "workers", "w", 30, "workers amount")
+	senderCmd.Flags().StringVarP(&senderTimeout, "timeout", "t", "", "timeout - string human times - empty means no timeout")
+	senderCmd.Flags().StringVarP(&senderFileSize, "size", "s", "", "filesize - string human size")
+	senderCmd.Flags().IntVarP(&senderFileAmount, "amount", "a", 10, "fileamount")
+	senderCmd.Flags().StringVarP(&senderUrl, "url", "u", "", "url to send to")
 	rootCmd.AddCommand(senderCmd)
 }

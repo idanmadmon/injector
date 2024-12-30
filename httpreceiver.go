@@ -10,21 +10,23 @@ import (
 )
 
 type Receiver struct {
+	address    string
+	readSpeed  int64
 	totalBytes int64
 	totalFiles int64
-	readSpeed  int64
 	ctx        context.Context
 	cancel     context.CancelFunc
 	server     *http.Server
 }
 
-func NewHttpReceiver(readSpeed int64) *Receiver {
+func NewHttpReceiver(address string, readSpeed int64) *Receiver {
 	return &Receiver{
 		readSpeed: readSpeed,
+		address:   address,
 	}
 }
 
-func (r *Receiver) Start(address string) error {
+func (r *Receiver) Start() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	r.ctx = ctx
 	r.cancel = cancel
@@ -33,11 +35,11 @@ func (r *Receiver) Start(address string) error {
 	mux.HandleFunc("/", r.handlePost)
 
 	r.server = &http.Server{
-		Addr:    address,
+		Addr:    r.address,
 		Handler: mux,
 	}
 
-	fmt.Printf("Server is running on %s\n", address)
+	fmt.Printf("Server is running on %s\n", r.address)
 	go r.statsPrinter()
 	return r.server.ListenAndServe()
 }
@@ -56,7 +58,9 @@ func (r *Receiver) handlePost(w http.ResponseWriter, req *http.Request) {
 	} else {
 		bytesRead, err = io.Copy(io.Discard, req.Body)
 	}
-	if err != nil {
+
+	if err != nil && err != io.EOF {
+		fmt.Printf("got error: %v\n", err)
 		http.Error(w, "Failed to read request body", http.StatusInternalServerError)
 		return
 	}
