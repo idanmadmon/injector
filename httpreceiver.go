@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"sync/atomic"
 	"time"
+
+	ratereader "github.com/idanmadmon/rate-limited-reader"
 )
 
 type Receiver struct {
@@ -53,11 +55,12 @@ func (r *Receiver) handlePost(w http.ResponseWriter, req *http.Request) {
 	var bytesRead int64
 	var err error
 
+	reader := req.Body
 	if r.readSpeed > 0 {
-		bytesRead, err = r.readWithLimit(req.Body)
-	} else {
-		bytesRead, err = io.Copy(io.Discard, req.Body)
+		reader = ratereader.NewRateLimitedReadCloser(req.Body, r.readSpeed)
 	}
+
+	bytesRead, err = io.Copy(io.Discard, reader)
 
 	if err != nil && err != io.EOF {
 		fmt.Printf("got error: %v\n", err)

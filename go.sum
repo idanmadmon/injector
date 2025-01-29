@@ -3,6 +3,14 @@ github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4
 github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/idanmadmon/rate-limited-reader v1.0.0 h1:IZVHQU7MEk7QvSlpA43u9WDV6XKPpq1DkLTgfUJyZ+Q=
+github.com/idanmadmon/rate-limited-reader v1.0.0/go.mod h1:w4IYscN7SvQhQkvtnrNWbvfyOCjkU06ETEDxY9/fSaw=
+github.com/idanmadmon/rate-limited-reader v1.1.0 h1:gvZeRW2vYIE/BdQErCKVgpYGRE361a//0iP9t8RJ0Ws=
+github.com/idanmadmon/rate-limited-reader v1.1.0/go.mod h1:w4IYscN7SvQhQkvtnrNWbvfyOCjkU06ETEDxY9/fSaw=
+github.com/idanmadmon/rate-limited-reader v1.2.0 h1:bFVKcYS5OIMtmPd/R7fLQ60ZvbgYDYaj1t/rd658mjQ=
+github.com/idanmadmon/rate-limited-reader v1.2.0/go.mod h1:w4IYscN7SvQhQkvtnrNWbvfyOCjkU06ETEDxY9/fSaw=
+github.com/idanmadmon/rate-limited-reader v1.3.0 h1:h8jfl6HX4yeQoB8wMcB7I+A6VxFjUh4JupZAb5dzHLQ=
+github.com/idanmadmon/rate-limited-reader v1.3.0/go.mod h1:w4IYscN7SvQhQkvtnrNWbvfyOCjkU06ETEDxY9/fSaw=
 github.com/idanmadmon/stream-duplicator v1.0.0 h1:XeBWFWt63m5pvabOtKM6Mi0+wC587TdKjLoLPPzF/F0=
 github.com/idanmadmon/stream-duplicator v1.0.0/go.mod h1:/YSJ1efi3xPnZMaLkfVS1XD1Aabg15pdBUkt4n7UxoI=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=

@@ -11,10 +11,8 @@ var version = "1.0.0"
 var rootCmd = &cobra.Command{
 	Use:     "injector",
 	Version: version,
-	Short:   "injector - a simple CLI to transform and inspect strings",
-	Long: `injector is a super fancy CLI (kidding)
-    
-One can use injector to modify or inspect strings straight from the terminal`,
+	Short:   "injector - a tool for sender and receiver tests",
+	Long:    `injector - a tool for sender and receiver tests`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 	},
