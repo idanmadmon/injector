@@ -40,7 +40,7 @@ Flags:
 
 ### Receiver
 ```
-.\injector.exe receiver --address 0.0.0.0:1238
+.\injector.exe receiver --address 0.0.0.0:1238 --speed 5
 ```
 
 ## Stream Duplicator Usage
@@ -78,6 +78,13 @@ And you can download Red Hat Enterprise Linux 9 64-Bit from here for free:<br>
 [Red Hat Enterprise Linux 9.5 64-Bit](https://developers.redhat.com/products/rhel/download#publicandprivatecloudreadyrhelimages)
 
 Install the Virtual Machine and setup 2 machine, sender and receiver
+
+### Step By Step Guide
+1. After installing a functional rhel vm with working network and ping to google
+2. Set hostname to something easy to remember like receiver using `sudo hostnamectl set-hostname receiver --static`
+3. Use the update-injector.bat to put the injector in the lab
+4. Importent Notice: the receiver won't work unless you put it in the firewalld (or disable the firewalld which is less recommended)
+5. 
 
 ### Utils
 
