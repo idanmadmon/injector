@@ -23,3 +23,8 @@ go.work.sum
 
 # env file
 .env
+
+# local files
+injector/injector
+injector/injector.exe
+injector/update-injector.bat
