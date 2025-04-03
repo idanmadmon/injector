@@ -10,5 +10,6 @@ type SenderConfig struct {
 }
 
 type ReceiverConfig struct {
-	InnerConfig interface{}
+	ReadSpeed int64
+	Verbose   bool
 }

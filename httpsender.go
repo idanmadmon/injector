@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -22,6 +23,7 @@ type HttpSender struct {
 	counter uint32
 	file    string
 	fileC   chan struct{}
+	wg      sync.WaitGroup
 }
 
 func NewHttpSender(conf SenderConfig, url string) *HttpSender {
@@ -44,30 +46,33 @@ func (h *HttpSender) Start(ctx context.Context) {
 	defer close(h.fileC)
 
 	for i := 0; i < h.conf.WorkersAmount; i++ {
-		go h.sendWorker(ctx)
+		go h.sendWorker()
 	}
 
 	for {
 		select {
 		case <-ctx.Done():
+			fmt.Println("Gracefully shutdown - waiting for all files to finish")
+			h.wg.Wait()
 			fmt.Println("Sent total %d files of %s", atomic.LoadUint32(&h.counter), units.HumanSize(float64(h.conf.FileSize)))
 			return
 		case <-time.After(time.Second):
 			for i := 0; i < h.conf.FileAmount; i++ {
 				h.fileC <- struct{}{}
+				h.wg.Add(1)
 			}
 			fmt.Printf("Sending %d files, channel status: %d / %d\n", h.conf.FileAmount, len(h.fileC), cap(h.fileC))
 		}
 	}
 }
 
-func (h *HttpSender) sendWorker(ctx context.Context) {
+func (h *HttpSender) sendWorker() {
 	for range h.fileC {
-		h.sendHttpRequest(ctx)
+		h.sendHttpRequest()
 	}
 }
 
-func (h *HttpSender) sendHttpRequest(ctx context.Context) {
+func (h *HttpSender) sendHttpRequest() {
 	req, err := http.NewRequest("POST", h.url, strings.NewReader(h.file))
 	if err != nil {
 		fmt.Println("Error creating request:", err)
@@ -97,4 +102,5 @@ func (h *HttpSender) sendHttpRequest(ctx context.Context) {
 
 	resp.Body.Close()
 	atomic.AddUint32(&h.counter, 1)
+	h.wg.Done()
 }

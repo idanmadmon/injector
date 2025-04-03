@@ -12,8 +12,8 @@ import (
 )
 
 type Receiver struct {
+	conf       ReceiverConfig
 	address    string
-	readSpeed  int64
 	totalBytes int64
 	totalFiles int64
 	ctx        context.Context
@@ -21,10 +21,10 @@ type Receiver struct {
 	server     *http.Server
 }
 
-func NewHttpReceiver(address string, readSpeed int64) *Receiver {
+func NewHttpReceiver(conf ReceiverConfig, address string) *Receiver {
 	return &Receiver{
-		readSpeed: readSpeed,
-		address:   address,
+		conf:    conf,
+		address: address,
 	}
 }
 
@@ -42,6 +42,13 @@ func (r *Receiver) Start() error {
 	}
 
 	fmt.Printf("Server is running on %s\n", r.address)
+
+	if r.conf.ReadSpeed > 0 {
+		fmt.Printf("Receiving with rate limit of %d bytes per second\n", r.conf.ReadSpeed)
+	} else {
+		fmt.Println("Receiving with no rate limit")
+	}
+
 	go r.statsPrinter()
 	return r.server.ListenAndServe()
 }
@@ -56,26 +63,37 @@ func (r *Receiver) handlePost(w http.ResponseWriter, req *http.Request) {
 	var err error
 
 	reader := req.Body
-	if r.readSpeed > 0 {
-		reader = ratereader.NewRateLimitedReadCloser(req.Body, r.readSpeed)
+	if r.conf.ReadSpeed > 0 {
+		reader = ratereader.NewRateLimitedReadCloser(req.Body, r.conf.ReadSpeed)
 	}
 
-	bytesRead, err = io.Copy(io.Discard, reader)
+	// bytesRead, err = io.Copy(io.Discard, reader) - no, for showing bytes read over time
+	buffer := make([]byte, 32*1024)
+	var n int
+	var totalBytesRead int64
+	for err == nil {
+		n, err = reader.Read(buffer)
+		bytesRead = int64(n)
+		totalBytesRead += bytesRead
+		atomic.AddInt64(&r.totalBytes, bytesRead)
+		r.verboseLog(fmt.Sprintf("Got %d bytes", bytesRead))
+	}
+
+	r.verboseLog(fmt.Sprintf("Finish reading file with %d bytes \n", totalBytesRead))
 
 	if err != nil && err != io.EOF {
 		fmt.Printf("got error: %v\n", err)
 		http.Error(w, "Failed to read request body", http.StatusInternalServerError)
 		return
 	}
-	req.Body.Close()
 
-	atomic.AddInt64(&r.totalBytes, bytesRead)
+	req.Body.Close()
 	atomic.AddInt64(&r.totalFiles, 1)
 	w.WriteHeader(http.StatusOK)
 }
 
 func (r *Receiver) readWithLimit(body io.Reader) (int64, error) {
-	buffer := make([]byte, r.readSpeed)
+	buffer := make([]byte, r.conf.ReadSpeed)
 	var totalBytes int64
 	finished := false
 
@@ -91,7 +109,7 @@ func (r *Receiver) readWithLimit(body io.Reader) (int64, error) {
 				totalBytes += int64(n)
 
 				elapsed := time.Since(start)
-				sleepDuration := time.Second*time.Duration(n)/time.Duration(r.readSpeed) - elapsed
+				sleepDuration := time.Second*time.Duration(n)/time.Duration(r.conf.ReadSpeed) - elapsed
 
 				if sleepDuration > 0 {
 					time.Sleep(sleepDuration)
@@ -153,4 +171,10 @@ func (r *Receiver) Stop() {
 
 	atomic.StoreInt64(&r.totalBytes, 0)
 	atomic.StoreInt64(&r.totalFiles, 0)
+}
+
+func (r *Receiver) verboseLog(msg string) {
+	if r.conf.Verbose {
+		fmt.Println(msg)
+	}
 }
