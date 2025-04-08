@@ -11,9 +11,10 @@ import (
 )
 
 var (
-	receiverAddress   string
-	receiverReadSpeed int64
-	receiverVerbose   bool
+	receiverAddress      string
+	receiverReadSpeed    int64
+	receiverMaxBandwidth int64
+	receiverVerbose      bool
 )
 
 var receiverCmd = &cobra.Command{
@@ -21,8 +22,9 @@ var receiverCmd = &cobra.Command{
 	Short: "create a http receiver",
 	Run: func(cmd *cobra.Command, args []string) {
 		conf := injector.ReceiverConfig{
-			ReadSpeed: receiverReadSpeed,
-			Verbose:   receiverVerbose,
+			ReadSpeed:    receiverReadSpeed,
+			MaxBandwidth: receiverMaxBandwidth,
+			Verbose:      receiverVerbose,
 		}
 		r := injector.NewHttpReceiver(conf, receiverAddress)
 
@@ -41,5 +43,6 @@ func init() {
 
 	receiverCmd.Flags().StringVarP(&receiverAddress, "address", "a", "0.0.0.0:1238", "address to listen on")
 	receiverCmd.Flags().Int64VarP(&receiverReadSpeed, "speed", "s", 0, "bytes to read per second - default no rate limit")
+	receiverCmd.Flags().Int64VarP(&receiverMaxBandwidth, "bandwidth", "b", 0, "max bandwidth in bytes to read per second - default no bandwidth control")
 	receiverCmd.Flags().BoolVarP(&receiverVerbose, "verbose", "v", false, "verbose print")
 }

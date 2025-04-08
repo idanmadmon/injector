@@ -69,6 +69,7 @@ func (h *HttpSender) Start(ctx context.Context) {
 func (h *HttpSender) sendWorker() {
 	for range h.fileC {
 		h.sendHttpRequest()
+		h.wg.Done()
 	}
 }
 
@@ -102,5 +103,4 @@ func (h *HttpSender) sendHttpRequest() {
 
 	resp.Body.Close()
 	atomic.AddUint32(&h.counter, 1)
-	h.wg.Done()
 }

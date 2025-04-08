@@ -8,17 +8,19 @@ import (
 	"sync/atomic"
 	"time"
 
+	bandwidthcontroller "github.com/idanmadmon/bandwidth-controller"
 	ratereader "github.com/idanmadmon/rate-limited-reader"
 )
 
 type Receiver struct {
-	conf       ReceiverConfig
-	address    string
-	totalBytes int64
-	totalFiles int64
-	ctx        context.Context
-	cancel     context.CancelFunc
-	server     *http.Server
+	conf                ReceiverConfig
+	address             string
+	totalBytes          int64
+	totalFiles          int64
+	bandwidthController *bandwidthcontroller.BandwidthController
+	ctx                 context.Context
+	cancel              context.CancelFunc
+	server              *http.Server
 }
 
 func NewHttpReceiver(conf ReceiverConfig, address string) *Receiver {
@@ -43,7 +45,10 @@ func (r *Receiver) Start() error {
 
 	fmt.Printf("Server is running on %s\n", r.address)
 
-	if r.conf.ReadSpeed > 0 {
+	if r.conf.MaxBandwidth > 0 {
+		r.bandwidthController = bandwidthcontroller.NewBandwidthController(r.conf.MaxBandwidth)
+		fmt.Printf("Receiving with bandwidth control with max %d bytes per second\n", r.conf.MaxBandwidth)
+	} else if r.conf.ReadSpeed > 0 {
 		fmt.Printf("Receiving with rate limit of %d bytes per second\n", r.conf.ReadSpeed)
 	} else {
 		fmt.Println("Receiving with no rate limit")
@@ -61,10 +66,19 @@ func (r *Receiver) handlePost(w http.ResponseWriter, req *http.Request) {
 
 	var bytesRead int64
 	var err error
-
-	reader := req.Body
-	if r.conf.ReadSpeed > 0 {
+	var reader io.ReadCloser
+	if r.conf.MaxBandwidth > 0 {
+		if contentLength := req.ContentLength; contentLength > -1 {
+			reader = r.bandwidthController.AppendFileReader(req.Body, contentLength).Reader
+			r.verboseLog(fmt.Sprintf("got new file! Content-Length: %d bytes", contentLength))
+		} else {
+			reader = req.Body
+			r.verboseLog("warning: No Content-Length header provided - using request body as reader")
+		}
+	} else if r.conf.ReadSpeed > 0 {
 		reader = ratereader.NewRateLimitedReadCloser(req.Body, r.conf.ReadSpeed)
+	} else {
+		reader = req.Body
 	}
 
 	// bytesRead, err = io.Copy(io.Discard, reader) - no, for showing bytes read over time
@@ -78,6 +92,7 @@ func (r *Receiver) handlePost(w http.ResponseWriter, req *http.Request) {
 		atomic.AddInt64(&r.totalBytes, bytesRead)
 		r.verboseLog(fmt.Sprintf("Got %d bytes", bytesRead))
 	}
+	reader.Close()
 
 	r.verboseLog(fmt.Sprintf("Finish reading file with %d bytes \n", totalBytesRead))
 
@@ -87,7 +102,6 @@ func (r *Receiver) handlePost(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	req.Body.Close()
 	atomic.AddInt64(&r.totalFiles, 1)
 	w.WriteHeader(http.StatusOK)
 }

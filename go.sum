@@ -3,6 +3,8 @@ github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4
 github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/idanmadmon/bandwidth-controller v1.0.0 h1:QmQ/xX2eXL2doItbCwQZCbu3YLBzTllpS+U/XQJe0Ow=
+github.com/idanmadmon/bandwidth-controller v1.0.0/go.mod h1:ClIEAR1Wg0MKgOj2a95TJCzgoMg5qSRPEhpP0XZXfdU=
 github.com/idanmadmon/rate-limited-reader v1.0.0 h1:IZVHQU7MEk7QvSlpA43u9WDV6XKPpq1DkLTgfUJyZ+Q=
 github.com/idanmadmon/rate-limited-reader v1.0.0/go.mod h1:w4IYscN7SvQhQkvtnrNWbvfyOCjkU06ETEDxY9/fSaw=
 github.com/idanmadmon/rate-limited-reader v1.1.0 h1:gvZeRW2vYIE/BdQErCKVgpYGRE361a//0iP9t8RJ0Ws=

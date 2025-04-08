@@ -10,6 +10,7 @@ type SenderConfig struct {
 }
 
 type ReceiverConfig struct {
-	ReadSpeed int64
-	Verbose   bool
+	ReadSpeed    int64
+	MaxBandwidth int64
+	Verbose      bool
 }
