@@ -5,6 +5,8 @@ github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/idanmadmon/bandwidth-controller v1.0.0 h1:QmQ/xX2eXL2doItbCwQZCbu3YLBzTllpS+U/XQJe0Ow=
 github.com/idanmadmon/bandwidth-controller v1.0.0/go.mod h1:ClIEAR1Wg0MKgOj2a95TJCzgoMg5qSRPEhpP0XZXfdU=
+github.com/idanmadmon/bandwidth-controller v1.1.0 h1:fmyz/4XoDXGp7a12ngEW1B07Rz+Aov87rRIGOyCFNVo=
+github.com/idanmadmon/bandwidth-controller v1.1.0/go.mod h1:q4gVfXkEPxpE8NugVf5gIbBXnRgk0L2d4OlYDhAx5ks=
 github.com/idanmadmon/rate-limited-reader v1.0.0 h1:IZVHQU7MEk7QvSlpA43u9WDV6XKPpq1DkLTgfUJyZ+Q=
 github.com/idanmadmon/rate-limited-reader v1.0.0/go.mod h1:w4IYscN7SvQhQkvtnrNWbvfyOCjkU06ETEDxY9/fSaw=
 github.com/idanmadmon/rate-limited-reader v1.1.0 h1:gvZeRW2vYIE/BdQErCKVgpYGRE361a//0iP9t8RJ0Ws=
@@ -15,6 +17,8 @@ github.com/idanmadmon/rate-limited-reader v1.3.0 h1:h8jfl6HX4yeQoB8wMcB7I+A6VxFj
 github.com/idanmadmon/rate-limited-reader v1.3.0/go.mod h1:w4IYscN7SvQhQkvtnrNWbvfyOCjkU06ETEDxY9/fSaw=
 github.com/idanmadmon/rate-limited-reader v1.4.0 h1:/Opc+dvqxDRfQ4RGE2BCxsPiS/BcsL8DdcEzSkxp+Uo=
 github.com/idanmadmon/rate-limited-reader v1.4.0/go.mod h1:w4IYscN7SvQhQkvtnrNWbvfyOCjkU06ETEDxY9/fSaw=
+github.com/idanmadmon/rate-limited-reader v1.4.1 h1:rIukS89MshQ9VmmMf6tpUenPLmfQKeE9r94H1toICt8=
+github.com/idanmadmon/rate-limited-reader v1.4.1/go.mod h1:w4IYscN7SvQhQkvtnrNWbvfyOCjkU06ETEDxY9/fSaw=
 github.com/idanmadmon/stream-duplicator v1.0.0 h1:XeBWFWt63m5pvabOtKM6Mi0+wC587TdKjLoLPPzF/F0=
 github.com/idanmadmon/stream-duplicator v1.0.0/go.mod h1:/YSJ1efi3xPnZMaLkfVS1XD1Aabg15pdBUkt4n7UxoI=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
